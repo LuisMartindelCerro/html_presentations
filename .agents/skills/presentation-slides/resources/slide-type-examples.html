@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide type examples</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+/* EDIT DESIGN HERE: colours/fonts below affect this deck immediately. */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans)}
+/* -- Chrome -- */
+#app{display:flex;flex-direction:column;height:100%}
+.top-bar,.bottom-bar{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;flex-shrink:0;background:var(--bar-bg);z-index:5}
+.top-bar{border-bottom:1px solid var(--bar-border)}
+.bottom-bar{border-top:1px solid var(--bar-border)}
+.deck-title{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--text-dim);letter-spacing:.02em}
+.deck-title .accent{color:var(--orange)}
+.top-logo{height:20px;opacity:.75}
+.theme-toggle,.transport-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--ghost);
+  background:transparent;color:var(--text-dim);cursor:pointer;font-size:12px;transition:all .25s;
+  display:flex;align-items:center;justify-content:center}
+.theme-toggle:hover,.transport-btn:hover{border-color:var(--orange);color:var(--orange)}
+.transport-btn:disabled{opacity:.3;cursor:default}
+.transport{display:flex;align-items:center;gap:10px}
+.step-indicator{font-family:var(--mono);font-size:12px;color:var(--text-dim)}
+.step-indicator .current{color:var(--text);font-weight:700}
+.slide-dots{display:flex;gap:5px;justify-content:center}
+.slide-dot{width:7px;height:7px;border-radius:50%;border:none;background:var(--ghost);cursor:pointer;transition:all .2s;padding:0}
+.slide-dot.active{background:var(--orange);width:18px;border-radius:4px}
+.nav-hints{display:flex;align-items:center;gap:4px}
+.kbd{font-family:var(--mono);font-size:10px;padding:2px 5px;border:1px solid var(--ghost);border-radius:3px;color:var(--text-dim)}
+.in-iframe .top-bar,.in-iframe .bottom-bar{display:none}
+
+/* -- Stage -- */
+.slides-viewport{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background:var(--bg);container-type:size}
+.slides-stage{position:relative;width:min(100cqi,100cqb*16/9);height:min(100cqb,100cqi*9/16);container-type:size}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;
+  transform:translateX(28px);transition:opacity .45s ease,transform .45s ease;
+  padding:4.5cqb 6cqi;display:flex;flex-direction:column;overflow:hidden}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0)}
+.slide.exit-left{transform:translateX(-28px)}
+html[data-density="stage"] .detail{display:none}
+
+/* -- Type -- */
+.kicker{font-family:var(--mono);font-size:clamp(9px,1.15cqi,15px);font-weight:700;
+  text-transform:uppercase;letter-spacing:.16em;color:var(--orange);margin-bottom:1.4cqb;flex-shrink:0}
+.slide-title{font-size:clamp(24px,3.7cqi,54px);font-weight:800;line-height:1.1;
+  letter-spacing:-.025em;margin-bottom:2.6cqb;flex-shrink:0}
+.slide-title .dim{color:var(--text-dim);font-weight:500}
+.slide-title .accent{color:var(--orange)}
+.lede{font-size:clamp(13px,1.9cqi,27px);line-height:1.45;color:var(--text-dim);max-width:70cqi}
+.lede b{color:var(--text)}
+.foot{margin-top:auto;padding-top:1.6cqb;flex-shrink:0;font-size:clamp(11px,1.45cqi,20px);
+  line-height:1.4;color:var(--text-dim)}
+.foot b{color:var(--text)}
+.src{font-family:var(--mono);font-size:clamp(8px,1cqi,13px);color:var(--text-dim);letter-spacing:.04em}
+
+/* -- Speaker notes (guide density only) -- */
+.detail.fac{margin-top:1.6cqb;padding:1.4cqb 2cqi;border-left:3px solid var(--orange);
+  background:var(--code-bg);border-radius:0 6px 6px 0;flex-shrink:0;
+  font-size:clamp(10px,1.25cqi,16px);line-height:1.5;color:var(--text-dim);overflow-y:auto;max-height:30cqb}
+.detail.fac b{color:var(--text)}
+.detail.fac .lbl{font-family:var(--mono);font-size:clamp(8px,1cqi,13px);font-weight:700;
+  text-transform:uppercase;letter-spacing:.12em;color:var(--orange);display:block;margin-bottom:.4cqb}
+.detail.fac p+p{margin-top:.7cqb}
+
+
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.slide.active .lede{animation:fadeSlideUp .6s ease .15s both}
+
+
+.g-grid,.g-pair,.g-three{display:grid;gap:1.5cqi}.g-grid{grid-template-columns:repeat(4,1fr)}.g-pair{grid-template-columns:repeat(2,1fr)}.g-three{grid-template-columns:repeat(3,1fr);margin-top:2cqb}
+.g-box{background:var(--surface);border:1px solid var(--code-border);border-radius:10px;padding:2cqb 1.7cqi;min-width:0}
+.g-grid .g-box{border-left:3px solid var(--orange)}
+.g-box h2{font-size:clamp(14px,1.6cqi,24px);margin-bottom:1cqb}
+.g-box p{font-size:clamp(11px,1.2cqi,18px);color:var(--text-dim);line-height:1.45}
+.g-tag{color:var(--orange);font:700 clamp(10px,1cqi,14px)/1.3 var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1cqb}
+.g-intro{font-size:clamp(12px,1.4cqi,21px);color:var(--text-dim);margin-bottom:2.5cqb;line-height:1.4}
+.g-code{font:clamp(12px,1.2cqi,19px)/1.65 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text);margin:0}
+.g-good{color:var(--rung)} .g-orange{color:var(--orange)}
+.g-warn{border-top:3px solid #d97706}.g-safe{border-top:3px solid var(--rung)}
+.g-table{width:100%;border-collapse:collapse;text-align:left;font-size:clamp(11px,1.2cqi,18px)}
+.g-table th,.g-table td{padding:1.5cqb 1cqi;border-bottom:1px solid var(--code-border)}
+.g-table th{color:var(--orange);font-family:var(--mono)}.g-table td{color:var(--text-dim)}
+.g-art{min-height:30cqb;display:flex;align-items:center;justify-content:center}
+.g-art svg{width:85%;height:24cqb}
+.slide.active .g-box{animation:fadeSlideUp .5s ease both}
+@media (prefers-reduced-motion:reduce){.slide,.slide.active *{animation:none!important;transition:none!important}}
+
+.density-button{width:auto;min-width:124px;padding:0 10px;border-radius:14px;font-family:var(--mono);font-size:10px;white-space:nowrap}
+</style>
+<link rel="stylesheet" href="../../../../assets/palettes.css">
+</head>
+<body>
+<script>(function(){
+  // -- Presenter bridge: detail density, slide reporting, hotkey relay --
+  var embedded = window !== window.top, root = document.documentElement;
+  root.setAttribute('data-density', embedded ? 'stage' : 'guide');
+  function setDensity(d){
+    const guide = d === 'guide';
+    root.setAttribute('data-density', guide ? 'guide' : 'stage');
+    const button = document.getElementById('densityToggle');
+    if(button){ button.setAttribute('aria-pressed', String(guide)); button.textContent = guide ? 'Reading notes: on' : 'Reading notes: off'; }
+  }
+  window.setDeckDensity = setDensity;
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'deck-command' && e.data.action === 'set-density') setDensity(e.data.density);
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.metaKey || e.ctrlKey || e.altKey) return;
+    if(e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    var k = (e.key || '').toLowerCase();
+    if(k !== 'd' && k !== 'q' && k !== 'n' && k !== 'l') return;
+    if(embedded) window.parent.postMessage({type:'deck-hotkey', key:k}, '*');
+    else if(k === 'd') setDensity(root.getAttribute('data-density') === 'guide' ? 'stage' : 'guide');
+  });
+  if(!embedded) return;
+  function slides(){ return document.querySelectorAll('.slides-stage .slide'); }
+  function activeIndex(list){ for(var i = 0; i < list.length; i++) if(list[i].classList.contains('active')) return i; return -1; }
+  function tidy(s, n){ return (s || '').replace(/\s+/g, ' ').trim().slice(0, n); }
+  var lastIdx = null, pending = null;
+  function send(){
+    var list = slides(), idx = activeIndex(list);
+    var el = idx >= 0 ? list[idx] : document.body;
+    var h = el && el.querySelector('h1, h2, h3, .slide-title');
+    var text = el ? ((el.innerText || '').trim() || (el.textContent || '')) : '';
+    window.parent.postMessage({type:'deck-slide', index:idx, total:list.length,
+      title: tidy(h ? h.textContent : document.title, 120), text: tidy(text, 700)}, '*');
+  }
+  function report(){
+    var idx = activeIndex(slides());
+    if(idx === lastIdx) return;
+    lastIdx = idx; clearTimeout(pending); pending = setTimeout(send, 160);
+  }
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'deck-command' && e.data.action === 'report-slide'){ lastIdx = null; report(); }
+  });
+  new MutationObserver(report).observe(document.querySelector('.slides-stage') || document.body,
+    {attributes:true, attributeFilter:['class'], subtree:true, childList:true});
+  report();
+})();</script>
+<script>if(window!==window.top)document.body.classList.add('in-iframe');</script>
+
+<div id="app">
+  <div class="top-bar">
+    <span class="deck-title"><span class="accent">Slide type examples</span></span>
+    <button class="theme-toggle density-button" id="densityToggle" type="button" aria-label="Toggle reading notes" aria-pressed="true">Reading notes: on</button>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+  </div>
+  <div class="slides-viewport"><div class="slides-stage">
+<section class="slide active" data-slide="0"><div class="kicker">01 / Slide types</div><h1 class="slide-title">Card grid</h1><p class="g-intro">Four equal cards for related ideas.</p><div class="g-grid"><article class="g-box"><div class="g-tag">01 / Discover</div><h2>Explore</h2><p>Ask questions and notice patterns.</p></article><article class="g-box"><div class="g-tag">02 / Define</div><h2>Focus</h2><p>Choose the message to share.</p></article><article class="g-box"><div class="g-tag">03 / Create</div><h2>Build</h2><p>Turn an idea into a story.</p></article><article class="g-box"><div class="g-tag">04 / Share</div><h2>Present</h2><p>Invite your audience along.</p></article></div><p class="foot">Useful for themes, steps, skills, or moments.</p></section>
+<section class="slide" data-slide="1"><div class="kicker">02 / Slide types</div><h1 class="slide-title">Code signature + annotations</h1><p class="g-intro">Explain each part of a statement.</p><div class="g-box"><pre class="g-code"><span class="g-orange">tell_story</span>(memory, audience, message)</pre></div><div class="g-three"><div class="g-box"><div class="g-tag">Input</div><p>The event you want to share.</p></div><div class="g-box"><div class="g-tag">Context</div><p>Who is listening to the story.</p></div><div class="g-box"><div class="g-tag">Outcome</div><p>The idea they remember.</p></div></div><p class="foot">Illustrative code; adapt the labels to your topic.</p></section>
+<section class="slide" data-slide="2"><div class="kicker">03 / Slide types</div><h1 class="slide-title">Side-by-side code comparison</h1><p class="g-intro">Compare two versions at a glance.</p><div class="g-pair"><article class="g-box"><div class="g-tag">Version A</div><h2>A list</h2><pre class="g-code">memories = [
+  "first bike",
+  "family trips"
+]</pre></article><article class="g-box"><div class="g-tag">Version B</div><h2>A story</h2><pre class="g-code">story = {
+  moment: "first bike",
+  feeling: "freedom"
+}</pre></article></div><p class="foot">Useful for two approaches or before and after.</p></section>
+<section class="slide" data-slide="3"><div class="kicker">04 / Slide types</div><h1 class="slide-title">CLI + output</h1><p class="g-intro">Show an action followed by its result.</p><div class="g-box"><pre class="g-code"><span class="g-orange">$</span> create-story --chapter childhood
+
+Reading your notes...
+Arranging the moments...
+<span class="g-good">Ready:</span> a story to share.</pre></div><p class="foot">Illustrative command and output; this is not a real program.</p></section>
+<section class="slide" data-slide="4"><div class="kicker">05 / Slide types</div><h1 class="slide-title">Contrast columns</h1><p class="g-intro">Make two choices or perspectives easy to compare.</p><div class="g-pair"><article class="g-box g-warn"><div class="g-tag">Before</div><h2>A list of dates</h2><p>Many facts, with the meaning left for the audience to find.</p></article><article class="g-box g-safe"><div class="g-tag">After</div><h2>A meaningful moment</h2><p>One experience connects the facts to a feeling or lesson.</p></article></div><p class="foot">Useful for challenge and response, or before and after.</p></section>
+<section class="slide" data-slide="5"><div class="kicker">06 / Slide types</div><h1 class="slide-title">Data table</h1><p class="g-intro">Organize a few comparable facts.</p><div class="g-box"><table class="g-table"><thead><tr><th>Chapter</th><th>Place</th><th>What it shaped</th></tr></thead><tbody><tr><td>Early years</td><td>Place A</td><td>Curiosity</td></tr><tr><td>School</td><td>Place B</td><td>Confidence</td></tr><tr><td>Studies</td><td>Place C</td><td>Direction</td></tr></tbody></table></div><p class="foot">Placeholder values; replace them with your own facts.</p></section>
+<section class="slide" data-slide="6"><div class="kicker">07 / Slide types</div><h1 class="slide-title">Z3 / verification output</h1><p class="g-intro">Pair an example with visible checks.</p><div class="g-pair"><article class="g-box"><div class="g-tag">Example input</div><h2>Slide brief</h2><pre class="g-code">topic: childhood
+audience: friends
+message: curiosity
+photo: supplied</pre></article><article class="g-box"><div class="g-tag">Example results</div><pre class="g-code"><span class="g-good">PASS</span> Clear topic
+<span class="g-good">PASS</span> One message
+<span class="g-orange">TODO</span> Add photo</pre></article></div><p class="foot">Illustrative output; no actual validation was run.</p></section>
+<section class="slide" data-slide="7"><div class="kicker">08 / Slide types</div><h1 class="slide-title">Brand illustration + copy</h1><p class="g-intro">Give an image space beside one clear idea.</p><div class="g-pair"><div class="g-box g-art"><svg viewBox="0 0 500 300" role="img" aria-label="Abstract mountain landscape"><circle cx="375" cy="75" r="36" fill="var(--orange)" opacity=".8"/><path d="M20 255 160 80 280 255Z" fill="var(--rung)" opacity=".25"/><path d="M150 255 300 105 480 255Z" fill="var(--orange)" opacity=".24"/><path d="M20 255H480M160 80 20 255M160 80l120 175M300 105 150 255M300 105l180 150" stroke="var(--text)" stroke-width="3" fill="none" opacity=".65"/></svg></div><article class="g-box"><div class="g-tag">A visual story</div><h2>A place to begin</h2><p>Use your photo or illustration here, alongside one short idea.</p></article></div><div class="detail fac"><span class="lbl">Image description</span><p>An abstract landscape shows two overlapping mountains and a circular sun, using the presentation palette.</p></div><p class="foot">The local SVG is a placeholder for your own image.</p></section>
+  </div></div>
+  <div class="bottom-bar">
+    <div class="transport">
+      <button class="transport-btn" id="btnPrev" title="Previous"><i class="fas fa-chevron-left"></i></button>
+      <span class="step-indicator"><span class="current" id="slideNum">1</span> / <span id="slideTotal">8</span></span>
+      <button class="transport-btn" id="btnNext" title="Next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="slide-dots" id="slideDots"></div>
+    <div class="nav-hints"><span class="kbd">Left</span><span class="kbd">Right</span><span class="kbd">D</span></div>
+  </div>
+</div>
+
+<script>
+// -- Navigation --
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const TOTAL = slides.length;
+  let current = 0, transitioning = false;
+  const slideNum = document.getElementById('slideNum');
+  const dots = document.getElementById('slideDots');
+  const btnPrev = document.getElementById('btnPrev'), btnNext = document.getElementById('btnNext');
+  const themeToggle = document.getElementById('themeToggle');
+  const densityToggle = document.getElementById('densityToggle');
+  densityToggle.addEventListener('click', () => window.setDeckDensity(
+    document.documentElement.getAttribute('data-density') === 'guide' ? 'stage' : 'guide'));
+  window.setDeckDensity(document.documentElement.getAttribute('data-density'));
+  document.getElementById('slideTotal').textContent = TOTAL;
+  for (let i = 0; i < TOTAL; i++){
+    const d = document.createElement('button');
+    d.className = 'slide-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dots.appendChild(d);
+  }
+  function goTo(n){
+    if (n < 0 || n >= TOTAL || n === current || transitioning) return;
+    transitioning = true;
+    const dir = n > current ? 1 : -1;
+    slides.forEach(s => s.classList.remove('active','exit-left'));
+    if (dir > 0 && slides[current]) slides[current].classList.add('exit-left');
+    slides[n].classList.add('active');
+    current = n;
+    slideNum.textContent = current + 1;
+    document.querySelectorAll('.slide-dot').forEach((d,i) => d.classList.toggle('active', i === current));
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === TOTAL - 1;
+    setTimeout(() => { transitioning = false; }, 500);
+  }
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+  btnPrev.disabled = true;
+  document.addEventListener('keydown', e => {
+    if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.key === 'ArrowRight' || e.key === ' ') goTo(current + 1);
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+    if (e.key === 'ArrowDown'){ e.preventDefault(); window.parent.postMessage({type:'deck-nav',dir:'next'},'*'); }
+    if (e.key === 'ArrowUp'){ e.preventDefault(); window.parent.postMessage({type:'deck-nav',dir:'prev'},'*'); }
+  });
+  window.addEventListener('message', e => {
+    if (e.data && e.data.type === 'deck-command'){
+      if (e.data.action === 'go-first') goTo(0);
+      if (e.data.action === 'next') goTo(current + 1);
+      if (e.data.action === 'prev') goTo(current - 1);
+      if (e.data.action === 'go-last'){ current = -1; goTo(TOTAL - 1); }
+      if (e.data.action === 'set-theme') setTheme(e.data.theme);
+    }
+  });
+  window.parent.postMessage({type:'deck-ready',total:TOTAL},'*');
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggle.innerHTML = theme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    try { localStorage.setItem('slides-theme', theme); } catch(e){}
+    window.parent.postMessage({type:'deck-theme',theme:theme},'*');
+  }
+  themeToggle.addEventListener('click', () =>
+    setTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'));
+  try { const saved = localStorage.getItem('slides-theme'); if (saved) setTheme(saved); } catch(e){}
+  // Direct links such as #slide-3 open a specific example.
+  const requested = /^#slide-(\d+)$/.exec(location.hash);
+  if (requested) goTo(Number(requested[1]) - 1);
+
+})();
+</script>
+</body>
+</html>

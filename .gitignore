@@ -1,0 +1,7 @@
+# Local dependencies and private talk
+node_modules/
+luis_presentation/
+.DS_Store
+
+debug.log
+__pycache__/

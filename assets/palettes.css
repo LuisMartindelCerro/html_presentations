@@ -1,0 +1,107 @@
+/* Edit this file to change colours across all decks and presenters.
+   Keep this stylesheet after each HTML file's inline <style> block.
+   data-theme controls light/dark. data-palette on a .slide overrides one slide. */
+:root {
+  --bg: #151C2B;
+  --surface: #222D40;
+  --surface-hi: #323B4C;
+  --slate: #323B4C;
+  --primary: #56BFFA;
+  --amber: #FFC27C;
+  --violet: #A99CF5;
+  --text: #F6F8FD;
+  --text-dim: #C1CCDE;
+  --orange: var(--primary); /* legacy deck accent alias */
+  --orange-dim: rgba(86,191,250,.22);
+  --orange-soft: rgba(86,191,250,.11);
+  --orange-glow: rgba(86,191,250,.5);
+  --rung: var(--violet);
+  --rung-dim: rgba(169,156,245,.2);
+  --ghost: rgba(246,248,253,.19);
+  --code-bg: rgba(246,248,253,.05);
+  --code-border: rgba(246,248,253,.13);
+  --row-alt: rgba(246,248,253,.035);
+  --row-border: rgba(246,248,253,.11);
+  --bar-bg: #151C2B;
+  --bar-border: rgba(246,248,253,.15);
+  --green: #75D7AD;
+  --red: #FF858A;
+  --amber-dim: rgba(255,194,124,.14);
+  --green-dim: rgba(117,215,173,.14);
+  --red-dim: rgba(255,133,138,.14);
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Montserrat', sans-serif;
+  /* Supplied thesis brick artwork: keep these category colours in both themes. */
+  --lego-blue: #4C9FC1;
+  --lego-green: #2F7749;
+  --lego-red: #C51A00;
+  --lego-yellow: #FFD04B;
+  --lego-yellow-signal: #AE7D18; /* shaded yellow for a readable trace on light plots */
+  color-scheme: dark;
+}
+[data-theme="light"] {
+  --bg: #F6F8FD;
+  --surface: #FFFFFF;
+  --surface-hi: #EAF2FB;
+  --slate: #323B4C;
+  --primary: #56BFFA;
+  --amber: #FFB86B;
+  --violet: #8275D9;
+  --text: #323B4C;
+  --text-dim: #566277;
+  --orange: #1676AD; /* readable accent text derived from primary blue */
+  --orange-dim: rgba(86,191,250,.21);
+  --orange-soft: rgba(86,191,250,.11);
+  --orange-glow: rgba(86,191,250,.4);
+  --rung: var(--violet);
+  --rung-dim: rgba(130,117,217,.17);
+  --ghost: rgba(50,59,76,.16);
+  --code-bg: rgba(50,59,76,.035);
+  --code-border: rgba(50,59,76,.12);
+  --row-alt: rgba(50,59,76,.025);
+  --row-border: rgba(50,59,76,.1);
+  --bar-bg: #FFFFFF;
+  --bar-border: rgba(50,59,76,.13);
+  --green: #177A58;
+  --red: #A63949;
+  --amber-dim: rgba(255,184,107,.19);
+  --green-dim: rgba(23,122,88,.12);
+  --red-dim: rgba(166,57,73,.11);
+  color-scheme: light;
+}
+/* Named variation: use <section class="slide" data-palette="sunset">.
+   Adjust or add named presets here without rewriting existing deck CSS. */
+.slide[data-palette="sunset"] {
+  --bg: #261C33;
+  --surface: #382745;
+  --primary: #FFC27C;
+  --orange: #FFC27C;
+  --violet: #D4B8FA;
+  --text: #FFF8F3;
+  --text-dim: #E1CFDA;
+  --code-bg: rgba(255,248,243,.07);
+  --code-border: rgba(255,248,243,.17);
+  background: var(--bg);
+  color: var(--text);
+}
+[data-theme="light"] .slide[data-palette="sunset"] {
+  --bg: #FFF4E9;
+  --surface: #FFFFFF;
+  --primary: #A85539;
+  --orange: #A85539;
+  --violet: #7758B6;
+  --text: #473642;
+  --text-dim: #6F5866;
+  --code-bg: rgba(71,54,66,.04);
+  --code-border: rgba(71,54,66,.13);
+}
+body {
+  background-image: radial-gradient(circle at 50% 50%, rgba(86,191,250,.055), transparent 70%),
+    linear-gradient(rgba(246,248,253,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(246,248,253,.02) 1px, transparent 1px);
+}
+[data-theme="light"] body {
+  background-image: radial-gradient(circle at 50% 50%, rgba(86,191,250,.065), transparent 70%),
+    linear-gradient(rgba(50,59,76,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(50,59,76,.025) 1px, transparent 1px);
+}
